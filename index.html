@@ -182,7 +182,14 @@ function drawElectron(x, y, size) {
     ctx.shadowColor = '#ffffff';
     ctx.fill();
 }
-
+function drawNucleus(x, y, size) {
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = size * 2;
+    ctx.shadowColor = '#ffffff';
+    ctx.fill();
+}
 function drawOrbit(radius) {
     ctx.beginPath();
     ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
@@ -200,12 +207,7 @@ const canvasSize = Math.min(window.innerWidth, window.innerHeight);
 
     // Draw nucleus
     const nucleusSize = canvas.width * 0.05;
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, nucleusSize, 0, 2 * Math.PI);
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowBlur = nucleusSize * 2;
-    ctx.shadowColor = '#ffffff';
-    ctx.fill();
+    drawNucleus(canvas.width / 2, canvas.height / 2, nucleusSize);
 
     // Draw orbits and electrons with animation
     const time = Date.now() * 0.001;
