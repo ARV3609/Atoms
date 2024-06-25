@@ -143,14 +143,10 @@ const canvas = document.getElementById('atomCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-    const container = document.querySelector('.atom-container');
+    const displayWidth = document.documentElement.clientWidth; // Get viewport width
 
-    // Determine the smaller dimension of the container
-    const size = Math.min(container.clientWidth, container.clientHeight);
-
-    // Set canvas dimensions to be square
-    canvas.width = size;
-    canvas.height = size;
+    canvas.width = displayWidth;
+    canvas.height = displayWidth;
 
     updateElement(); // Redraw the current element with new dimensions
 }
