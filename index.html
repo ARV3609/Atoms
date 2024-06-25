@@ -189,7 +189,7 @@ function drawElectron(x, y, size) {
 
 function drawOrbit(radius) {
     ctx.beginPath();
-    ctx.ellipse(canvas.width / 2, canvas.height / 2, radius, radius, 0, 0, 2 * Math.PI);
+    ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 2;
     ctx.stroke();
