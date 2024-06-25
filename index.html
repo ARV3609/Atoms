@@ -138,86 +138,93 @@
     ];
 
     let currentElementIndex = 0;
-    const canvas = document.getElementById('atomCanvas');
-    const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('atomCanvas');
+const ctx = canvas.getContext('2d');
 
-    function resizeCanvas() {
-        const container = document.querySelector('.atom-container');
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        updateElement();
-    }
+function resizeCanvas() {
+    const container = document.querySelector('.atom-container');
+    const details = document.querySelector('.details');
+    const canvasContainerHeight = container.clientHeight - details.clientHeight;
 
-    // Resize canvas initially
-    resizeCanvas();
+    canvas.width = container.clientWidth;
+    canvas.height = canvasContainerHeight;
 
-    // Handle window resize
-    window.addEventListener('resize', resizeCanvas);
+    updateElement(); // Redraw the current element with new dimensions
+}
 
-    document.getElementById('prev').addEventListener('click', () => {
-        if (currentElementIndex > 0) currentElementIndex--;
-        updateElement();
-    });
+// Resize canvas initially
+resizeCanvas();
 
-    document.getElementById('next').addEventListener('click', () => {
-        if (currentElementIndex < elements.length - 1) currentElementIndex++;
-        updateElement();
-    });
+// Handle window resize
+window.addEventListener('resize', resizeCanvas);
 
-    function updateElement() {
-        const element = elements[currentElementIndex];
-        document.getElementById('elementName').innerText = element.name;
-        document.getElementById('elementDetails').innerHTML = `Atomic No: ${element.protons}<br>E: ${element.electrons}  P: ${element.protons}  N: ${element.neutrons}`;
-        drawAtom(element);
-    }
-
-    function drawElectron(x, y) {
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = '#ffffff';
-        ctx.fill();
-    }
-
-    function drawOrbit(radius) {
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
-
-    function drawAtom(element) {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw nucleus
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, 17, 0, 2 * Math.PI);
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#ffffff';
-        ctx.fill();
-
-        // Draw orbits and electrons with animation
-        const time = Date.now() * 0.001;
-        let radius = 50;
-        element.orbitals.forEach((count) => {
-            drawOrbit(radius);
-            for (let i = 0; i < count; i++) {
-                const angle = time + (i / count) * 2 * Math.PI;
-                const x = canvas.width / 2 + radius * Math.cos(angle);
-                const y = canvas.height / 2 + radius * Math.sin(angle);
-                drawElectron(x, y);
-            }
-            radius += 40;
-        });
-
-        requestAnimationFrame(() => drawAtom(element));
-    }
-
+document.getElementById('prev').addEventListener('click', () => {
+    if (currentElementIndex > 0) currentElementIndex--;
     updateElement();
+});
+
+document.getElementById('next').addEventListener('click', () => {
+    if (currentElementIndex < elements.length - 1) currentElementIndex++;
+    updateElement();
+});
+
+function updateElement() {
+    const element = elements[currentElementIndex];
+    document.getElementById('elementName').innerText = element.name;
+    document.getElementById('elementDetails').innerHTML = `Atomic No: ${element.protons}<br>E: ${element.electrons}  P: ${element.protons}  N: ${element.neutrons}`;
+    drawAtom(element);
+}
+
+function drawElectron(x, y, size) {
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = size * 2;
+    ctx.shadowColor = '#ffffff';
+    ctx.fill();
+}
+
+function drawOrbit(radius) {
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+}
+
+function drawAtom(element) {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw nucleus
+    const nucleusSize = Math.min(canvas.width, canvas.height) * 0.05;
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, nucleusSize, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = nucleusSize * 2;
+    ctx.shadowColor = '#ffffff';
+    ctx.fill();
+
+    // Draw orbits and electrons with animation
+    const time = Date.now() * 0.001;
+    let maxOrbitRadius = Math.min(canvas.width, canvas.height) * 0.3;
+    element.orbitals.forEach((count, orbitalIndex) => {
+        const orbitRadius = maxOrbitRadius * (orbitalIndex + 1) / (element.orbitals.length + 1);
+        drawOrbit(orbitRadius);
+        for (let i = 0; i < count; i++) {
+            const angle = time + (i / count) * 2 * Math.PI * (orbitalIndex % 2 === 0 ? -1 : 1); // Alternate direction
+            const electronSize = Math.min(canvas.width, canvas.height) * 0.01;
+            const x = canvas.width / 2 + orbitRadius * Math.cos(angle);
+            const y = canvas.height / 2 + orbitRadius * Math.sin(angle);
+            drawElectron(x, y, electronSize);
+        }
+    });
+
+    requestAnimationFrame(() => drawAtom(element));
+}
+
+updateElement(); // Initial draw of the first element
+
 </script>
 </body>
 </html>
