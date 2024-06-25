@@ -144,12 +144,13 @@ const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
     const container = document.querySelector('.atom-container');
-    const details = document.querySelector('.details');
-    const canvasContainerHeight = container.clientWidth; // Ensure the height matches the width
 
-    // Set canvas dimensions to maintain a square aspect ratio
-    canvas.width = container.clientWidth;
-    canvas.height = canvasContainerHeight;
+    // Determine the smaller dimension of the container
+    const size = Math.min(container.clientWidth, container.clientHeight);
+
+    // Set canvas dimensions to be square
+    canvas.width = size;
+    canvas.height = size;
 
     updateElement(); // Redraw the current element with new dimensions
 }
@@ -188,18 +189,17 @@ function drawElectron(x, y, size) {
 
 function drawOrbit(radius) {
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, 2 * Math.PI);
+    ctx.ellipse(canvas.width / 2, canvas.height / 2, radius, radius, 0, 0, 2 * Math.PI);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 2;
     ctx.stroke();
 }
-
 function drawAtom(element) {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw nucleus
-    const nucleusSize = canvas.width * 0.05; // Adjust proportionally
+    const nucleusSize = canvas.width * 0.05; // Adjust proportionally to canvas width
     ctx.beginPath();
     ctx.arc(canvas.width / 2, canvas.height / 2, nucleusSize, 0, 2 * Math.PI);
     ctx.fillStyle = '#ffffff';
