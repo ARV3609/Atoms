@@ -191,11 +191,15 @@ function drawOrbit(radius) {
     ctx.stroke();
 }
 function drawAtom(element) {
+const canvasSize = Math.min(window.innerWidth, window.innerHeight);
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw nucleus
-    const nucleusSize = canvas.width * 0.05; // Adjust proportionally to canvas width
+    const nucleusSize = canvas.width * 0.05;
     ctx.beginPath();
     ctx.arc(canvas.width / 2, canvas.height / 2, nucleusSize, 0, 2 * Math.PI);
     ctx.fillStyle = '#ffffff';
@@ -210,14 +214,17 @@ function drawAtom(element) {
         const orbitRadius = maxOrbitRadius * (orbitalIndex + 1) / (element.orbitals.length + 1);
         drawOrbit(orbitRadius);
         for (let i = 0; i < count; i++) {
-            const angle = time + (i / count) * 2 * Math.PI * (orbitalIndex % 2 === 0 ? -1 : 1); // Alternate direction
+            let angleIncrement = (i / count) * 2 * Math.PI;
+            if (orbitalIndex % 2 === 1) {
+                angleIncrement *= -1; // Reverse direction for odd indexed orbits
+            }
+            const angle = time + angleIncrement;
             const electronSize = canvas.width * 0.01;
             const x = canvas.width / 2 + orbitRadius * Math.cos(angle);
             const y = canvas.height / 2 + orbitRadius * Math.sin(angle);
             drawElectron(x, y, electronSize);
         }
     });
-
     requestAnimationFrame(() => drawAtom(element));
 }
 
