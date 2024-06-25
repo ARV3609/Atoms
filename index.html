@@ -137,15 +137,17 @@
         // Next elements continue here...
     ];
 
-    let currentElementIndex = 0;
+    
+   let currentElementIndex = 0;
 const canvas = document.getElementById('atomCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
     const container = document.querySelector('.atom-container');
     const details = document.querySelector('.details');
-    const canvasContainerHeight = container.clientHeight - details.clientHeight;
+    const canvasContainerHeight = container.clientWidth; // Ensure the height matches the width
 
+    // Set canvas dimensions to maintain a square aspect ratio
     canvas.width = container.clientWidth;
     canvas.height = canvasContainerHeight;
 
@@ -197,7 +199,7 @@ function drawAtom(element) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw nucleus
-    const nucleusSize = Math.min(canvas.width, canvas.height) * 0.05;
+    const nucleusSize = canvas.width * 0.05; // Adjust proportionally
     ctx.beginPath();
     ctx.arc(canvas.width / 2, canvas.height / 2, nucleusSize, 0, 2 * Math.PI);
     ctx.fillStyle = '#ffffff';
@@ -207,13 +209,13 @@ function drawAtom(element) {
 
     // Draw orbits and electrons with animation
     const time = Date.now() * 0.001;
-    let maxOrbitRadius = Math.min(canvas.width, canvas.height) * 0.3;
+    let maxOrbitRadius = canvas.width * 0.3;
     element.orbitals.forEach((count, orbitalIndex) => {
         const orbitRadius = maxOrbitRadius * (orbitalIndex + 1) / (element.orbitals.length + 1);
         drawOrbit(orbitRadius);
         for (let i = 0; i < count; i++) {
             const angle = time + (i / count) * 2 * Math.PI * (orbitalIndex % 2 === 0 ? -1 : 1); // Alternate direction
-            const electronSize = Math.min(canvas.width, canvas.height) * 0.01;
+            const electronSize = canvas.width * 0.01;
             const x = canvas.width / 2 + orbitRadius * Math.cos(angle);
             const y = canvas.height / 2 + orbitRadius * Math.sin(angle);
             drawElectron(x, y, electronSize);
